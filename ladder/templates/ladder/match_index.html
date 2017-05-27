@@ -2,43 +2,51 @@
 {% block content %}
     <div class="row">
         <div class="col-sm-6">
-            <h2>Top Players</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <td>Player</td>
-                        <td>Rating</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for player in player_list %}
+            {% if player_list %}
+                <h2>Top Players</h2>
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <td>{{ player.username }}</td>
-                            <td>{{ player.rating }}</td>
+                            <td>Player</td>
+                            <td>Rating</td>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for player in player_list %}
+                            <tr>
+                                <td>{{ player.username }}</td>
+                                <td>{{ player.rating }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <h2>Waiting for Players</h2>
+            {% endif %}
         </div>
         <div class="col-sm-6">
-            <h2>Recent Matches</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <td>Players</td>
-                        <td>Date</td>
-                        <td>Map</td>
-                    </tr>
-                <tbody>
-                    {% for match in recent_matches %}
+            {% if recent_matches %}
+                <h2>Recent Matches</h2>
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <td><a href="{% url 'ladder:match-detail' match.id %}">{{ match.winner }} vs {{ match.loser }}</a></td>
-                            <td>{{ match.date }}</td>
-                            <td>{{ match.get_match_map_display }}</td>
+                            <td>Players</td>
+                            <td>Date</td>
+                            <td>Map</td>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    <tbody>
+                        {% for match in recent_matches %}
+                            <tr>
+                                <td><a href="{% url 'ladder:match-detail' match.id %}">{{ match.winner }} vs {{ match.loser }}</a></td>
+                                <td>{{ match.date }}</td>
+                                <td>{{ match.get_match_map_display }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <h2>Waiting for Matches</h2>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

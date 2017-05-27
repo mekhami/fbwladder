@@ -4,6 +4,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <td>Rank</td>
                 <td>Player</td>
                 <td>Rating</td>
             </tr>
@@ -11,6 +12,7 @@
         <tbody>
             {% for player in players %}
                 <tr>
+                    <td>{{ forloop.counter }}</td>
                     <td>{{ player.username }}</td>
                     <td>{{ player.rating }}</td>
                 </tr>

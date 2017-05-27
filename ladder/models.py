@@ -5,6 +5,29 @@ from django.conf import settings
 from django.urls import reverse
 
 
+def assign_elo_changes(winner, loser):
+    win_rating = winner.rating
+    lose_rating = loser.rating
+    difference = win_rating - lose_rating
+    exp = (difference * -1) / 400
+    odds = 1 / (1 + math.pow(10, exp))
+
+    if win_rating < 2100:
+        k = 32
+    elif win_rating >= 2100 and win_rating < 2400:
+        k = 24
+    else:
+        k = 16
+
+    winner.rating = round(win_rating + (k * (1 - odds)))
+    new_rank_diff = winner.rating - win_rating
+    loser.rating = lose_rating - new_rank_diff
+
+    if loser.rating < 1:
+        loser.rating = 1
+
+    return (winner.rating, loser.rating)
+
 class Match(models.Model):
     LEAGUE_MAPS = (
         ('FS', 'Fighting Spirit'),
@@ -45,27 +68,3 @@ class Match(models.Model):
 
     def get_absolute_url(self):
         return reverse('ladder:match-detail', args=[str(self.id)])
-
-    @staticmethod
-    def assign_elo_changes(winner, loser):
-        win_rating = winner.rating
-        lose_rating = loser.rating
-        difference = win_rating - lose_rating
-        exp = (difference * -1) / 400
-        odds = 1 / (1 + math.pow(10, exp))
-
-        if win_rating < 2100:
-            k = 32
-        elif win_rating >= 2100 and win_rating < 2400:
-            k = 24
-        else:
-            k = 16
-
-        winner.rating = round(win_rating + (k * (1 - odds)))
-        new_rank_diff = winner.rating - win_rating
-        loser.rating = lose_rating - new_rank_diff
-
-        if new_loser_rating < 1:
-            loser.rating = 1
-
-        return (winner.rating, loser.rating)

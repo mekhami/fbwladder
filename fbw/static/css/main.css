@@ -1,3 +1,9 @@
 .navbar {
     margin-bottom: 30px;
 }
+.winner-name {
+    color: #149330;
+}
+.loser-name {
+    color: #ac1515;
+}

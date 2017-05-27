@@ -1,25 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1 class="text-center">{{ object.winner }} vs {{ object.loser }}</h1>
-    <p>{{ object.date }}</p>
-    <p>{{ object.match_map }}</p>
-    <p>{{ object.rated|yesno:"Yes,No" }}</p>
-    <p><a href="{{ object.replay.url}}" download><button class="btn btn-primary">Download Replay</button></a></p>
-    {% if object.calculated %}
-        <p><span class="winner-name">{{ object.winner.username }}</span> <small>(+{{ object.winner_rating_change }})</small>- <span class="loser-name">{{ object.loser.username }} <small>(-{{ object.loser_rating_change }})</small></span></p>
-    {% else %}
-        {% if request.user == object.winner %}
-            {% if not object.winner_confirmed %}
-                <a href="{% url 'ladder:match-confirm' object.id %}">Confirm Match</a>
+    <div class="row text-center">
+        <div class="col-sm-12">
+        <h1 style="margin-top: 20px; margin-bottom: 20px;">Match Details</h1>
+
+            {% if object.calculated %}
+                <h3><strong><a href="{% url 'users:detail' object.winner.username %}">{{ object.winner.username }}</a> <small class="winner-name">(+{{ object.winner_rating_change }})</small> - <a href="{% url 'users:detail' object.loser.username %}">{{ object.loser.username }}</a> <small class="loser-name">(-{{ object.loser_rating_change }})</small></strong></h3>
             {% else %}
-                <p>You have confirmed the match, but your opponent has not. Please remind them to confirm the results.</p>
+                {% if request.user == object.winner %}
+                    {% if not object.winner_confirmed %}
+                        <a href="{% url 'ladder:match-confirm' object.id %}">Confirm Match</a>
+                    {% else %}
+                        <p>You have confirmed the match, but your opponent has not. Please remind them to confirm the results.</p>
+                    {% endif %}
+                {% elif request.user == object.loser %}
+                    {% if not object.loser_confirmed %}
+                        <a href="{% url 'ladder:match-confirm' object.id %}">Confirm Match</a>
+                    {% else %}
+                        <p>You have confirmed the match, but your opponent has not. Please remind them to confirm the results.</p>
+                    {% endif %}
+                {% endif %}
             {% endif %}
-        {% elif request.user == object.loser %}
-            {% if not object.loser_confirmed %}
-                <a href="{% url 'ladder:match-confirm' object.id %}">Confirm Match</a>
-            {% else %}
-                <p>You have confirmed the match, but your opponent has not. Please remind them to confirm the results.</p>
-            {% endif %}
-        {% endif %}
-    {% endif %}
+
+            <p><strong>Date:</strong> {{ object.date }}</p>
+            <p><strong>Map:</strong> {{ object.get_match_map_display }}</p>
+            <p><strong>Rated:</strong> {{ object.rated|yesno:"Yes,No" }}</p>
+        <p><a href="{{ object.replay.url}}" download><button class="btn btn-primary">Download Replay</button></a></p>
+    </div>
 {% endblock %}
