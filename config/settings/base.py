@@ -275,6 +275,3 @@ ADMIN_URL = r'^admin/'
 # Your common stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_ACCESS_KEY_ID = 'AKIAJYT73RLFE7GSN44Q'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'fbw-replays'

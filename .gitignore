@@ -67,3 +67,4 @@ staticfiles/
 
 .cache/
 
+compose/nginx/dhparams.pem
