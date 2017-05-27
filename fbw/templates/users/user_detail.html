@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}User: {{ object.username }}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="row">
+    <div class="col-sm-12">
+
+      <h2>{{ object.username }}</h2>
+      {% if object.name %}
+        <p>{{ object.name }}</p>
+      {% endif %}
+      <p>Rating: {{ object.rating }}</p>
+      <p>Race: {{ object.race }}</p>
+      <p>Battle.net: {{ object.battlenet }}</p>
+      <p>Iccup: {{ object.iccup }}</p>
+      <p>Shield Battery: {{ object.shield_battery }}</p>
+
+      <h2>Recent Matches</h2>
+      {% for match in recent_matches %}
+          <p><a href="{% url 'ladder:match-detail' match.id %}">{{ match.winner }} vs {{ match.loser }}</a></p>
+      {% endfor %}
+    </div>
+  </div>
+
+{% if object == request.user %}
+<!-- Action buttons -->
+<div class="row">
+
+  <div class="col-sm-12">
+    <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
+    <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
+    <!-- Your Stuff: Custom user template urls -->
+  </div>
+
+</div>
+<!-- End Action buttons -->
+{% endif %}
+
+
+</div>
+{% endblock content %}
+

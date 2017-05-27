@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1 class="text-center">{{ object.winner }} vs {{ object.loser }}</h1>
+    <p>{{ object.date }}</p>
+    <p>{{ object.match_map }}</p>
+    <p>{{ object.rated|yesno:"Yes,No" }}</p>
+    <p><a href="{{ object.replay.url}}" download><button class="btn btn-primary">Download Replay</button></a></p>
+    {% if object.calculated %}
+        <p><span class="winner-name">{{ object.winner.username }}</span> <small>(+{{ object.winner_rating_change }})</small>- <span class="loser-name">{{ object.loser.username }} <small>(-{{ object.loser_rating_change }})</small></span></p>
+    {% else %}
+        {% if request.user == object.winner %}
+            {% if not object.winner_confirmed %}
+                <a href="{% url 'ladder:match-confirm' object.id %}">Confirm Match</a>
+            {% else %}
+                <p>You have confirmed the match, but your opponent has not. Please remind them to confirm the results.</p>
+            {% endif %}
+        {% elif request.user == object.loser %}
+            {% if not object.loser_confirmed %}
+                <a href="{% url 'ladder:match-confirm' object.id %}">Confirm Match</a>
+            {% else %}
+                <p>You have confirmed the match, but your opponent has not. Please remind them to confirm the results.</p>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endblock %}
