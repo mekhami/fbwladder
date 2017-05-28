@@ -32,6 +32,7 @@ class PlayerListView(generic.ListView):
     template_name = 'ladder/player_list.html'
     context_object_name = 'players'
     ordering = '-rating'
+    paginate_by = 15
 
 
 class MatchListView(generic.ListView):
@@ -39,6 +40,7 @@ class MatchListView(generic.ListView):
     template_name = 'ladder/match_list.html'
     context_object_name = 'matches'
     ordering = '-date'
+    paginate_by = 15
 
 class IndexView(generic.ListView):
     model = User
@@ -46,8 +48,8 @@ class IndexView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['player_list'] = User.objects.all().order_by('-rating')
-        context['recent_matches'] = Match.objects.all().order_by('-date').prefetch_related('winner', 'loser')
+        context['player_list'] = User.objects.all().order_by('-rating')[:10]
+        context['recent_matches'] = Match.objects.all().order_by('-date').prefetch_related('winner', 'loser')[:10]
         return context
 
 
