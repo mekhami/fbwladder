@@ -30,11 +30,56 @@ def assign_elo_changes(winner, loser):
 
 class Match(models.Model):
     LEAGUE_MAPS = (
-        ('FS', 'Fighting Spirit'),
+        ('AN', 'Andromeda'),
+        ('AV', 'Avalon'),
+        ('AZ', 'Aztec'),
+        ('BW', 'Beltway'),
+        ('BZ', 'Benzene'),
+        ('BR', 'Bloody Ridge'),
+        ('BS', 'Blue Storm'),
+        ('CR', 'Chain Reaction'),
         ('CB', 'Circuit Breaker'),
-        ('DE', 'Destination'),
+        ('CO', 'Colosseum'),
+        ('CG', 'Cross Game'),
+        ('DP', 'Dante\'s Peak'),
+        ('DE', 'Demian'),
+        ('DT', 'Desertec'),
+        ('DS', 'Destination'),
+        ('ED', 'Eddy'),
+        ('EC', 'Electric Circuit'),
+        ('EM', 'Empire of the Sun'),
+        ('ES', 'Eye of the Storm'),
+        ('FS', 'Fighting Spirit'),
+        ('FO', 'Fortress'),
+        ('GL', 'Gemlong'),
+        ('GR', 'Grandline'),
+        ('GZ', 'Ground Zero'),
+        ('HB', 'Heartbeat'),
+        ('HR', 'Heartbreak Ridge'),
+        ('HU', 'Hunters'),
+        ('IC', 'Icarus'),
         ('JA', 'Jade'),
+        ('LM', 'La Mancha'),
+        ('LQ', 'Latin Quarter'),
+        ('LO', 'Longinus'),
+        ('LU', 'Luna'),
+        ('MP', 'Match Point'),
+        ('ME', 'Medusa'),
+        ('MI', 'Mist'),
+        ('OT', 'Othello'),
+        ('OS', 'Outsider'),
+        ('OW', 'Overwatch'),
+        ('PF', 'Pathfinder'),
+        ('PR', 'Polaris Rhapsody'),
+        ('PY', 'Python'),
         ('QB', 'Queensbridge'),
+        ('RE', 'Resonance'),
+        ('RK', 'Roadkill'),
+        ('SR', 'Sniper Ridge'),
+        ('TC', 'Tau Cross'),
+        ('TS', 'Toad Stone'),
+        ('TO', 'Tornado'),
+        ('WC', 'Wind and Cloud')
     )
 
     calculated = models.BooleanField(default=False)
@@ -48,6 +93,9 @@ class Match(models.Model):
     loser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='loss')
     loser_confirmed = models.BooleanField(default=False)
     loser_rating_change = models.IntegerField(null=True)
+
+    def __str__(self):
+        return self.winner.username + ' vs ' + self.loser.username + ' ' + self.date
 
     def save(self, *args, **kwargs):
         if self.winner_confirmed and self.loser_confirmed and self.rated:
