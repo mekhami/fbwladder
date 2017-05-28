@@ -1,3 +1,4 @@
+{% load account socialaccount %}
 {% load staticfiles i18n %}<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -28,6 +29,8 @@
   </head>
 
   <body>
+
+    {% get_providers as socialaccount_providers %}
 
     <div class="m-b-1">
       <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
@@ -76,7 +79,7 @@
               </li>
               <li class="nav-item">
                 {# URL provided by django-allauth/account/urls.py #}
-                <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
+                <a id="log-in-link" class="nav-link" href="{% provider_login_url "discord" process="login" %}">{% trans "Sign In" %}</a>
               </li>
               </ul>
             {% endif %}

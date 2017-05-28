@@ -5,6 +5,7 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import User
+from .forms import UserUpdateForm
 from ladder.models import Match
 
 
@@ -28,8 +29,7 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
-
-    fields = ['battlenet', 'iccup', 'shield_battery', 'race']
+    form_class = UserUpdateForm
 
     # we already imported User in the view code above, remember?
     model = User

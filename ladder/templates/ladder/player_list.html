@@ -6,6 +6,7 @@
             <tr>
                 <td>Rank</td>
                 <td>Player</td>
+                <td>Race</td>
                 <td>Rating</td>
             </tr>
         </thead>
@@ -14,6 +15,7 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td><a href="{% url 'users:detail' player.username %}">{{ player.username }}</a></td>
+		    <td>{{ player.get_race_display }}</td>
                     <td>{{ player.rating }}</td>
                 </tr>
             {% endfor %}
