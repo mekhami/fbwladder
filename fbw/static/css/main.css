@@ -7,3 +7,6 @@
 .loser-name {
     color: #ac1515;
 }
+li.nav-item {
+    line-height: 2.5;
+}

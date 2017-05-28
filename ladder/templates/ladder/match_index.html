@@ -14,7 +14,7 @@
                     <tbody>
                         {% for player in player_list %}
                             <tr>
-                                <td>{{ player.username }}</td>
+                                <td><a href="{% url 'users:detail' player.username %}">{{ player.username }}</a></td>
                                 <td>{{ player.rating }}</td>
                             </tr>
                         {% endfor %}

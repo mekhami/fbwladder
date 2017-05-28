@@ -4,9 +4,11 @@
         <div class="col-sm-12">
         <h1 style="margin-top: 20px; margin-bottom: 20px;">Match Details</h1>
 
+
             {% if object.calculated %}
                 <h3><strong><a href="{% url 'users:detail' object.winner.username %}">{{ object.winner.username }}</a> <small class="winner-name">(+{{ object.winner_rating_change }})</small> - <a href="{% url 'users:detail' object.loser.username %}">{{ object.loser.username }}</a> <small class="loser-name">(-{{ object.loser_rating_change }})</small></strong></h3>
             {% else %}
+                <h3><strong><a href="{% url 'users:detail' object.winner.username %}">{{ object.winner.username }}</a> - <a href="{% url 'users:detail' object.loser.username %}">{{ object.loser.username }}</a></strong></h3>
                 {% if request.user == object.winner %}
                     {% if not object.winner_confirmed %}
                         <a href="{% url 'ladder:match-confirm' object.id %}">Confirm Match</a>
@@ -19,6 +21,8 @@
                     {% else %}
                         <p>You have confirmed the match, but your opponent has not. Please remind them to confirm the results.</p>
                     {% endif %}
+                {% else %}
+                    <p>This match has not yet been confirmed by both players.</p>
                 {% endif %}
             {% endif %}
 

@@ -73,3 +73,6 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # Your local stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
+AWS_ACCESS_KEY_ID = 'AKIAJBGUBO2YOIU5W2VQ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'fbw-replays'

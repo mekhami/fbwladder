@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Index</h1>
+    <h1 class="text-center">Rankings</h1>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -13,7 +13,7 @@
             {% for player in players %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ player.username }}</td>
+                    <td><a href="{% url 'users:detail' player.username %}">{{ player.username }}</a></td>
                     <td>{{ player.rating }}</td>
                 </tr>
             {% endfor %}

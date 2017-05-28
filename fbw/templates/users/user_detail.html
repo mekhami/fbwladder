@@ -13,11 +13,11 @@
       {% if object.name %}
         <p>{{ object.name }}</p>
       {% endif %}
-      <p>Rating: {{ object.rating }}</p>
-      <p>Race: {{ object.race }}</p>
-      <p>Battle.net: {{ object.battlenet }}</p>
-      <p>Iccup: {{ object.iccup }}</p>
-      <p>Shield Battery: {{ object.shield_battery }}</p>
+      <p><strong>Rating</strong>: {{ object.rating }}</p>
+      <p><strong>Race</strong>: {{ object.race }}</p>
+      <p><strong>Battle.net</strong>: {{ object.battlenet }}</p>
+      <p><strong>Iccup</strong>: {{ object.iccup }}</p>
+      <p><strong>Shield Battery</strong>: {{ object.shield_battery }}</p>
 
       <h2>Recent Matches</h2>
       {% for match in recent_matches %}

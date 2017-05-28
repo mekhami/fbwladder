@@ -34,9 +34,11 @@ class PlayerListView(generic.ListView):
     ordering = '-rating'
 
 
-class PlayerDetailView(generic.DetailView):
-    pass
-
+class MatchListView(generic.ListView):
+    model = Match
+    template_name = 'ladder/match_list.html'
+    context_object_name = 'matches'
+    ordering = '-date'
 
 class IndexView(generic.ListView):
     model = User
