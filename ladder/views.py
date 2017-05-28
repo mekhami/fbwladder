@@ -18,6 +18,10 @@ class MatchFormView(generic.FormView):
         return self.object.get_absolute_url()
 
     def form_valid(self, form):
+        if self.request.user == form.winner:
+            form.winner_confirmed = True
+        elif self.request.user == form.loser:
+            form.loser_confirmed = True
         self.object = form.save()
         return super().form_valid(form)
 
