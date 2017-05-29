@@ -13,7 +13,7 @@
         <tbody>
             {% for player in players %}
                 <tr>
-                    <td>{{ forloop.counter|add:paginator.page.start_index }}</td>
+                    <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
                     <td><a href="{% url 'users:detail' player.username %}">{{ player.username }}</a></td>
 		    <td>{{ player.get_race_display }}</td>
                     <td>{{ player.rating }}</td>
