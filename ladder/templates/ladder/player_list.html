@@ -5,20 +5,20 @@
         <thead>
             <tr>
                 <td>Rank</td>
+                <td>Rating</td>
                 <td>Player</td>
                 <td>Race</td>
                 <td>Games Played</td>
-                <td>Rating</td>
             </tr>
         </thead>
         <tbody>
             {% for player in players %}
                 <tr>
                     <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
+                    <td>{{ player.rating }}</td>
                     <td><a href="{% url 'users:detail' player.username %}">{{ player.username }}</a></td>
 		    <td>{{ player.get_race_display }}</td>
 		    <td>{{ player.games_played }}</td>
-                    <td>{{ player.rating }}</td>
                 </tr>
             {% endfor %}
         </tbody>
