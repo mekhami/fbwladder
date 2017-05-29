@@ -37,3 +37,4 @@ class MyUserAdmin(AuthUserAdmin):
     ) + AuthUserAdmin.fieldsets
     list_display = ('username', 'name', 'is_superuser', 'battlenet', 'iccup', 'race', 'rating', 'shield_battery')
     search_fields = ['name']
+    readonly_fields = ('iccup', 'rating', 'shield_battery', 'battlenet')
