@@ -1,6 +1,8 @@
 import math
 
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.conf import settings
 from django.urls import reverse
 
@@ -116,3 +118,12 @@ class Match(models.Model):
 
     def get_absolute_url(self):
         return reverse('ladder:match-detail', args=[str(self.id)])
+
+
+@receiver(pre_delete, sender=Match)
+def revert_rating(sender, instance, **kwargs):
+    if instance.calculated:
+        instance.winner.rating -= instance.winner_rating_change
+        instance.loser.rating += instance.loser_rating_change
+        instance.winner.save()
+        instance.loser.save()
