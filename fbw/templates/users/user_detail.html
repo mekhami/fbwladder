@@ -4,43 +4,72 @@
 {% block title %}User: {{ object.username }}{% endblock %}
 
 {% block content %}
-<div class="container">
+    <div class="container">
 
-  <div class="row">
-    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-6">
 
-      <h2>{{ object.username }}</h2>
-      {% if object.name %}
-        <p>{{ object.name }}</p>
-      {% endif %}
-      <p><strong>Rating</strong>: {{ object.rating }}</p>
-      <p><strong>Race</strong>: {{ object.race }}</p>
-      <p><strong>Battle.net</strong>: {{ object.battlenet }}</p>
-      <p><strong>Iccup</strong>: {{ object.iccup }}</p>
-      <p><strong>Shield Battery</strong>: {{ object.shield_battery }}</p>
+                <h2>{{ object.username }}</h2>
+                {% if object.name %}
+                    <p>{{ object.name }}</p>
+                {% endif %}
+                <p><strong>Rating</strong>: {{ object.rating }}</p>
+                <p><strong>Race</strong>: {{ object.get_race_display }}</p>
+                <p><strong>Battle.net</strong>: {{ object.battlenet }}</p>
+                <p><strong>Iccup</strong>: {{ object.iccup }}</p>
+                <p><strong>Shield Battery</strong>: {{ object.shield_battery }}</p>
 
-      <h2>Recent Matches</h2>
-      {% for match in recent_matches %}
-          <p><a href="{% url 'ladder:match-detail' match.id %}">{{ match.winner }} vs {{ match.loser }}</a></p>
-      {% endfor %}
+                <h2>Recent Matches</h2>
+                {% for match in recent_matches %}
+                    <p><a href="{% url 'ladder:match-detail' match.id %}">{{ match.winner }} vs {{ match.loser }}</a></p>
+                {% endfor %}
+            </div>
+            <div class="col-sm-6">
+                <h2>Statistics</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td>Matchup</td>
+                            <td>Winrate</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Zerg</td>
+                            <td>{{ object.vZ_winrate }}</td>
+                        </tr>
+                        <tr>
+                            <td>Terran</td>
+                            <td>{{ object.vT_winrate }}</td>
+                        </tr>
+                        <tr>
+                            <td>Protoss</td>
+                            <td>{{ object.vP_winrate }}</td>
+                        </tr>
+                        <tr>
+                            <td>Random</td>
+                            <td>{{ object.vR_winrate }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if object == request.user %}
+            <!-- Action buttons -->
+            <div class="row">
+
+                <div class="col-sm-12">
+                    <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
+                    <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
+                    <!-- Your Stuff: Custom user template urls -->
+                </div>
+
+            </div>
+            <!-- End Action buttons -->
+        {% endif %}
+
+
     </div>
-  </div>
-
-{% if object == request.user %}
-<!-- Action buttons -->
-<div class="row">
-
-  <div class="col-sm-12">
-    <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
-    <!-- Your Stuff: Custom user template urls -->
-  </div>
-
-</div>
-<!-- End Action buttons -->
-{% endif %}
-
-
-</div>
 {% endblock content %}
 

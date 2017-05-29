@@ -35,3 +35,35 @@ class User(AbstractUser):
     @property
     def games_played(self):
         return Match.objects.filter(Q(winner=self) | Q(loser=self)).count()
+
+    @property
+    def vZ_winrate(self):
+        wins = Match.objects.filter(Q(winner=self) & Q(loser__race='Z')).count()
+        losses = Match.objects.filter(Q(loser=self) & Q(winner__race='Z')).count()
+        if wins + losses == 0:
+            return ""
+        return "{0:.0f}%".format(wins / (wins+losses) * 100)
+
+    @property
+    def vT_winrate(self):
+        wins = Match.objects.filter(Q(winner=self) & Q(loser__race='T')).count()
+        losses = Match.objects.filter(Q(loser=self) & Q(winner__race='T')).count()
+        if wins + losses == 0:
+            return ""
+        return "{0:.0f}%".format(wins / (wins+losses) * 100)
+
+    @property
+    def vP_winrate(self):
+        wins = Match.objects.filter(Q(winner=self) & Q(loser__race='P')).count()
+        losses = Match.objects.filter(Q(loser=self) & Q(winner__race='P')).count()
+        if wins + losses == 0:
+            return ""
+        return "{0:.0f}%".format(wins / (wins+losses) * 100)
+
+    @property
+    def vR_winrate(self):
+        wins = Match.objects.filter(Q(winner=self) & Q(loser__race='R')).count()
+        losses = Match.objects.filter(Q(loser=self) & Q(winner__race='R')).count()
+        if wins + losses == 0:
+            return ""
+        return "{0:.0f}%".format(wins / (wins+losses) * 100)
