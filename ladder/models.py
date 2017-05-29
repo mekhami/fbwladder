@@ -83,7 +83,7 @@ class Match(models.Model):
     )
 
     calculated = models.BooleanField(default=False)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=True)
     match_map = models.CharField('Map', max_length=3, choices=LEAGUE_MAPS)
     rated = models.BooleanField(default=True)
     replay = models.FileField(upload_to='replays')
@@ -95,7 +95,7 @@ class Match(models.Model):
     loser_rating_change = models.IntegerField(null=True)
 
     def __str__(self):
-        return self.winner.username + ' vs ' + self.loser.username + ' ' + self.date
+        return self.winner.username + ' vs ' + self.loser.username + ' ' + self.date.strftime('%m/%d/%y')
 
     def save(self, *args, **kwargs):
         if self.winner_confirmed and self.loser_confirmed and self.rated:
