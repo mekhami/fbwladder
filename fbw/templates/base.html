@@ -96,6 +96,10 @@
           {% endfor %}
       {% endif %}
 
+      {% if unconfirmed_matches %}
+          <div class="alert alert-danger">You have <a href="{% url 'ladder:unconfirmed-matches' %}">{{ unconfirmed_matches }} unconfirmed match{{ unconfirmed_matches|pluralize:"es" }}</a>. Please confirm the results.</div>
+      {% endif %}
+
       {% block content %}
         <p>Use this document as a way to quick start any new project.</p>
       {% endblock content %}

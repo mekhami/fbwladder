@@ -67,3 +67,9 @@ class User(AbstractUser):
         if wins + losses == 0:
             return ""
         return "{0:.0f}%".format(wins / (wins+losses) * 100)
+
+    @property
+    def unconfirmed_matches(self):
+        unconfirmed_wins = Match.objects.filter(Q(winner=self) & Q(winner_confirmed=False)).count()
+        unconfirmed_losses = Match.objects.filter(Q(loser=self) & Q(loser_confirmed=False)).count()
+        return unconfirmed_wins + unconfirmed_losses

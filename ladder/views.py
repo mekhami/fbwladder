@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Q
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -32,6 +33,18 @@ class MatchDetailView(generic.DetailView):
     template_name = 'ladder/match_detail.html'
 
 
+class UnconfirmedMatchesView(generic.ListView):
+    model = Match
+    template_name = 'ladder/unconfirmed_matches.html'
+    context_object_name = 'matches'
+    ordering = '-date'
+    paginate_by = 10
+
+    def get_queryset(self):
+        unconfirmed_wins = Match.objects.filter(Q(winner=self.request.user) & Q(winner_confirmed=False))
+        unconfirmed_losses = Match.objects.filter(Q(loser=self.request.user) & Q(loser_confirmed=False))
+        return unconfirmed_wins | unconfirmed_losses
+
 class PlayerListView(generic.ListView):
     model = User
     template_name = 'ladder/player_list.html'
@@ -46,6 +59,8 @@ class MatchListView(generic.ListView):
     context_object_name = 'matches'
     ordering = '-date'
     paginate_by = 15
+    queryset = Match.objects.all().prefetch_related('winner', 'loser')
+
 
 class IndexView(generic.ListView):
     model = User
