@@ -26,6 +26,9 @@ class User(AbstractUser):
     rating = models.IntegerField(default=1200)
     shield_battery = models.CharField(max_length=100, unique=True, null=True, blank=True)
 
+    class Meta:
+        ordering = ('username',)
+
     def __str__(self):
         return self.username
 

@@ -17,7 +17,7 @@ class UserDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['recent_matches'] = Match.objects.filter(Q(winner=self.object) | Q(loser=self.object)).order_by('-date').prefetch_related('winner', 'loser')[:5]
+        context['recent_matches'] = Match.objects.filter(Q(winner=self.object) | Q(loser=self.object)).prefetch_related('winner', 'loser')[:5]
         return context
 
 class UserRedirectView(LoginRequiredMixin, RedirectView):

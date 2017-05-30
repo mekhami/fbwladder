@@ -107,6 +107,9 @@ class Match(models.Model):
     loser_confirmed = models.BooleanField(default=False)
     loser_rating_change = models.IntegerField(null=True)
 
+    class Meta:
+        ordering = ('-date',)
+
     def __str__(self):
         return self.winner.username + ' vs ' + self.loser.username + ' ' + self.date.strftime('%m/%d/%y')
 
