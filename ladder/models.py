@@ -34,7 +34,7 @@ def assign_elo_changes(winner, loser):
 
 def replay_file_name(instance, filename):
     name, file_ext = os.path.splitext(filename)
-    return 'replays/{}-{}-{}.{}'.format(
+    return 'replays/{}-{}-{}{}'.format(
         instance.winner.username, 
         instance.loser.username, 
         instance.date.strftime('%m-%d-%y'), 
@@ -99,7 +99,7 @@ class Match(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     match_map = models.CharField('Map', max_length=3, choices=LEAGUE_MAPS)
     rated = models.BooleanField(default=True)
-    replay = models.FileField(upload_to=replay_file_name)
+    replay = models.FileField(upload_to='replays')
     winner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='win')
     winner_confirmed = models.BooleanField(default=False)
     winner_rating_change = models.IntegerField(null=True)
