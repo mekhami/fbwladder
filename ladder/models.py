@@ -1,4 +1,5 @@
 import math
+import os
 
 from django.db import models
 from django.db.models.signals import pre_delete
@@ -29,6 +30,16 @@ def assign_elo_changes(winner, loser):
         loser.rating = 1
 
     return (winner.rating, loser.rating)
+
+
+def replay_file_name(instance, filename):
+    name, file_ext = os.path.splitext(filename)
+    return 'replays/{}-{}-{}.{}'.format(
+        instance.winner.username, 
+        instance.loser.username, 
+        instance.date.strftime('%m-%d-%y'), 
+        file_ext
+    )
 
 class Match(models.Model):
     LEAGUE_MAPS = (
@@ -88,7 +99,7 @@ class Match(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     match_map = models.CharField('Map', max_length=3, choices=LEAGUE_MAPS)
     rated = models.BooleanField(default=True)
-    replay = models.FileField(upload_to='replays')
+    replay = models.FileField(upload_to=replay_file_name)
     winner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='win')
     winner_confirmed = models.BooleanField(default=False)
     winner_rating_change = models.IntegerField(null=True)
