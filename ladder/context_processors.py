@@ -1,2 +1,5 @@
 def unconfirmed_matches(request):
-    return {'unconfirmed_matches': request.user.unconfirmed_matches}
+    if request.user.is_authenticated():
+        return {'unconfirmed_matches': request.user.unconfirmed_matches}
+    else:
+        return {}
