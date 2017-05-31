@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <h1 class="text-center">Report Match</h1>
-    <form method="POST" action="{% url 'ladder:submit' %}" enctype="multipart/form-data">{% csrf_token %}
+    <form method="POST" action="{% url 'ladder:match-report' match_id %}" enctype="multipart/form-data">{% csrf_token %}
         {{ form|crispy }}
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>

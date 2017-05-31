@@ -34,7 +34,8 @@ class MatchReportView(generic.FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['match_id'] = self.request.GET.get('pk')
+        kwargs['match_id'] = self.kwargs['pk']
+        kwargs['reporter'] = self.request.user
         return kwargs
 
     def get_success_url(self):
@@ -43,6 +44,11 @@ class MatchReportView(generic.FormView):
     def form_valid(self, form):
         self.object = form.save()
         return super().form_valid(form)
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['match_id'] = self.kwargs['pk']
+        return context
 
 
 class MatchDetailView(generic.DetailView):

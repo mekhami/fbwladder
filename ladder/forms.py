@@ -15,11 +15,13 @@ class ReportForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.match_id = kwargs.pop('match_id', None)
+        self.reporter = kwargs.pop('reporter')
         super().__init__(*args, **kwargs)
 
     def save(self, commit=True):
         model = super().save(commit=False)
         model.match = Match.objects.get(pk=self.match_id)
+        model.reporter = self.reporter
 
         if commit:
             model.save()

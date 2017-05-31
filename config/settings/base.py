@@ -172,6 +172,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # Your stuff: custom template context processors go here
                 'ladder.context_processors.unconfirmed_matches',
+                'ladder.context_processors.outstanding_reports',
             ],
         },
     },
