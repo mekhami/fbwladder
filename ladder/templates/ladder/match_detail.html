@@ -31,7 +31,7 @@
             <p><strong>Rated:</strong> {{ object.rated|yesno:"Yes,No" }}</p>
         <p>
             <a href="{{ object.replay.url}}" download><button class="btn btn-primary">Download Replay</button></a>
+	    <a href="{% url 'ladder:match-report' object.id %}"><button class="btn btn-danger">Report Match</button></a>
         </p>
-
     </div>
 {% endblock %}

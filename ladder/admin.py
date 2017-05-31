@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Match
+from .models import Match, Report
 
 
 class MatchAdmin(admin.ModelAdmin):
@@ -8,3 +8,4 @@ class MatchAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Match, MatchAdmin)
+admin.site.register(Report)

@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views import generic
 
 from .models import Match
-from .forms import MatchForm
+from .forms import MatchForm, ReportForm
 from fbw.users.models import User
 
 
@@ -25,6 +25,23 @@ class MatchFormView(generic.FormView):
         elif self.request.user == self.object.loser:
             self.object.loser_confirmed = True
         self.object.save()
+        return super().form_valid(form)
+
+
+class MatchReportView(generic.FormView):
+    template_name = 'ladder/report_match.html'
+    form_class = ReportForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['match_id'] = self.request.GET.get('pk')
+        return kwargs
+
+    def get_success_url(self):
+        return self.object.match.get_absolute_url()
+
+    def form_valid(self, form):
+        self.object = form.save()
         return super().form_valid(form)
 
 

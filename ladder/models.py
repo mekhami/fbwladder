@@ -134,6 +134,29 @@ class Match(models.Model):
         return reverse('ladder:match-detail', args=[str(self.id)])
 
 
+class Report(models.Model):
+    REPORT_TYPES = (
+        ('FRAUD', 'Fraudulent Match'),
+        ('BM', 'BM/Misconduct'),
+        ('DUP', 'Duplicate Match'),
+        ('INC', 'Incorrect Data')
+    )
+
+    description = models.TextField()
+    time_reported = models.DateTimeField(auto_now_add=True)
+    report_type = models.CharField(max_length=10, choices=REPORT_TYPES)
+    reporter = models.ForeignKey(settings.AUTH_USER_MODEL)
+    resolved = models.BooleanField(default=False)
+    match = models.ForeignKey(Match)
+
+    def __str__(self):
+        return '{} - {} vs {}'.format(
+            self.report_type,
+            self.match.winner.username,
+            self.match.loser.username
+        )
+
+
 @receiver(pre_delete, sender=Match)
 def revert_rating(sender, instance, **kwargs):
     if instance.calculated:
