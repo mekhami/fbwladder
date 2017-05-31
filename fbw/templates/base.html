@@ -100,6 +100,12 @@
           {% if unconfirmed_matches %}
               <div class="alert alert-danger">You have <a href="{% url 'ladder:unconfirmed-matches' %}">{{ unconfirmed_matches }} unconfirmed match{{ unconfirmed_matches|pluralize:"es" }}</a>. Please confirm the results.</div>
           {% endif %}
+	  {% if request.user.is_superuser %}
+		{% if outstanding_reports %}
+			
+		    <div class="alert alert-danger"><a href="{% url 'admin:ladder_report_changelist' %}">{{ outstanding_reports }} report{{ outstanding_reports|pluralize }}</a> is currently unresolved.</div>
+		{% endif %}
+	  {% endif %}
       {% endif %}
 
       {% block content %}
