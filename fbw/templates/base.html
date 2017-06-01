@@ -59,6 +59,12 @@
               </li>
             </ul>
             <ul class="navbar-nav ml-auto">
+              {% if request.user.is_superuser %}
+                  <li class="nav-item">
+                    {# URL provided by django-allauth/account/urls.py #}
+                    <a id="log-in-link" class="nav-link" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
+                  </li>
+              {% endif %}
               <li class="nav-item">
                 {# URL provided by django-allauth/account/urls.py #}
                 <a id="log-in-link" class="nav-link" href="{% url 'about' %}">{% trans "About" %}</a>
