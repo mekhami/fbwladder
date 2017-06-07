@@ -37,7 +37,7 @@
             {% endif %}
 
             <p><strong>Date:</strong> {{ object.date }}</p>
-            <p><strong>Map:</strong> {{ object.get_match_map_display }}</p>
+            <p><strong>Map:</strong> {{ object.match_map }}</p>
             <p><strong>Rated:</strong> {{ object.rated|yesno:"Yes,No" }}</p>
         <p>
             <a href="{{ object.replay.url}}" download><button class="btn btn-primary">Download Replay</button></a>

@@ -39,7 +39,7 @@
                             <tr>
                                 <td><a href="{% url 'ladder:match-detail' match.id %}">{{ match.winner }} vs {{ match.loser }}</a></td>
                                 <td>{{ match.date }}</td>
-                                <td>{{ match.get_match_map_display }}</td>
+                                <td>{{ match.match_map }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
