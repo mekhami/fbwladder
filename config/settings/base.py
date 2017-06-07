@@ -173,6 +173,7 @@ TEMPLATES = [
                 # Your stuff: custom template context processors go here
                 'ladder.context_processors.unconfirmed_matches',
                 'ladder.context_processors.outstanding_reports',
+                'ladder.context_processors.no_profile_data',
             ],
         },
     },
