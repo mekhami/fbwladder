@@ -6,8 +6,18 @@
 
 
             {% if object.calculated %}
-                <h3><strong><a href="{% url 'users:detail' object.winner.username %}">{{ object.winner.username }}</a> <small class="winner-name">(+{{ object.winner_rating_change }})</small> - <a href="{% url 'users:detail' object.loser.username %}">{{ object.loser.username }}</a> <small class="loser-name">(-{{ object.loser_rating_change }})</small></strong></h3>
+
+                <h3>
+                    <strong>
+                        <a href="{% url 'users:detail' object.winner.username %}">{{ object.winner.username }}</a> 
+                        <small class="winner-name">(+{{ object.winner_rating_change }})</small> 
+                        - 
+                        <a href="{% url 'users:detail' object.loser.username %}">{{ object.loser.username }}</a> 
+                        <small class="loser-name">(-{{ object.loser_rating_change }})</small>
+                    </strong>
+                </h3>
             {% else %}
+
                 <h3><strong><a href="{% url 'users:detail' object.winner.username %}">{{ object.winner.username }}</a> - <a href="{% url 'users:detail' object.loser.username %}">{{ object.loser.username }}</a></strong></h3>
                 {% if request.user == object.winner %}
                     {% if not object.winner_confirmed %}

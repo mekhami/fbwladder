@@ -1,11 +1,17 @@
+import json
 import math
 import os
+import requests
+import subprocess
+import tempfile
 
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.conf import settings
 from django.urls import reverse
+
 
 
 def assign_elo_changes(winner, loser):
@@ -42,69 +48,24 @@ def replay_file_name(instance, filename):
     )
 
 class Match(models.Model):
-    LEAGUE_MAPS = (
-        ('AN', 'Andromeda'),
-        ('AV', 'Avalon'),
-        ('AZ', 'Aztec'),
-        ('BW', 'Beltway'),
-        ('BZ', 'Benzene'),
-        ('BR', 'Bloody Ridge'),
-        ('BS', 'Blue Storm'),
-        ('CR', 'Chain Reaction'),
-        ('CB', 'Circuit Breaker'),
-        ('CO', 'Colosseum'),
-        ('CG', 'Cross Game'),
-        ('DP', 'Dante\'s Peak'),
-        ('DE', 'Demian'),
-        ('DT', 'Desertec'),
-        ('DS', 'Destination'),
-        ('ED', 'Eddy'),
-        ('EC', 'Electric Circuit'),
-        ('EM', 'Empire of the Sun'),
-        ('ES', 'Eye of the Storm'),
-        ('FS', 'Fighting Spirit'),
-        ('FO', 'Fortress'),
-        ('GL', 'Gemlong'),
-        ('GR', 'Grandline'),
-        ('GZ', 'Ground Zero'),
-        ('HB', 'Heartbeat'),
-        ('HR', 'Heartbreak Ridge'),
-        ('HU', 'Hunters'),
-        ('IC', 'Icarus'),
-        ('JA', 'Jade'),
-        ('LM', 'La Mancha'),
-        ('LQ', 'Latin Quarter'),
-        ('LO', 'Longinus'),
-        ('LU', 'Luna'),
-        ('MP', 'Match Point'),
-        ('ME', 'Medusa'),
-        ('MI', 'Mist'),
-        ('OT', 'Othello'),
-        ('OS', 'Outsider'),
-        ('OW', 'Overwatch'),
-        ('PF', 'Pathfinder'),
-        ('PR', 'Polaris Rhapsody'),
-        ('PY', 'Python'),
-        ('QB', 'Queensbridge'),
-        ('RE', 'Resonance'),
-        ('RK', 'Roadkill'),
-        ('SR', 'Sniper Ridge'),
-        ('TC', 'Tau Cross'),
-        ('TS', 'Toad Stone'),
-        ('TO', 'Tornado'),
-        ('WC', 'Wind and Cloud')
+    RACE_CHOICES = (
+        ('Z', 'Zerg'),
+        ('T', 'Terran'),
+        ('P', 'Protoss'),
+        ('R', 'Random'),
     )
 
     calculated = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
-    match_map = models.CharField('Map', max_length=3, choices=LEAGUE_MAPS)
-    rated = models.BooleanField(default=True)
+    match_map = models.CharField('Map', max_length=100, null=True, blank=True)
     replay = models.FileField(upload_to='replays')
-    winner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='win')
+    winner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='win', null=True)
     winner_confirmed = models.BooleanField(default=False)
+    winner_race = models.CharField(max_length=1, choices=RACE_CHOICES, null=True, blank=True)
     winner_rating_change = models.IntegerField(null=True)
-    loser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='loss')
+    loser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='loss', null=True)
     loser_confirmed = models.BooleanField(default=False)
+    loser_race = models.CharField(max_length=1, choices=RACE_CHOICES, null=True, blank=True)
     loser_rating_change = models.IntegerField(null=True)
 
     class Meta:
@@ -113,7 +74,59 @@ class Match(models.Model):
     def __str__(self):
         return self.winner.username + ' vs ' + self.loser.username + ' ' + self.date.strftime('%m/%d/%y')
 
+    def parse_replay(self):
+        from fbw.users.models import User
+
+        replay_content = requests.get(self.replay.url).content
+        tmp = tempfile.NamedTemporaryFile()
+        tmp.write(replay_content)
+        screp_path = os.path.join(os.path.dirname(__file__)) + '/screp'
+        parsed_map = json.loads(
+           subprocess.run([screp_path, "-map", tmp.name], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        )
+        parsed_cmds = json.loads(
+           subprocess.run([screp_path, "-cmds", tmp.name], stdout=subprocess.PIPE).stdout.decode('utf-8')
+        )
+
+        for command in reversed(parsed_cmds["Commands"]["Cmds"]):
+            try:
+                if command["Reason"]["Name"] == "Defeat":
+                    loser_id = command["PlayerID"]
+                    winner_id = int(not loser_id)
+                    break
+            except KeyError:
+                pass
+
+        winner = next(d for d in parsed_map["Header"]["Players"] if d['ID'] == winner_id)
+        loser = next(d for d in parsed_map["Header"]["Players"] if d['ID'] == loser_id)
+
+        self.winner_race = winner["Race"]["Name"][0]
+        self.loser_race = loser["Race"]["Name"][0]
+
+        try:
+            self.winner = User.objects.get(
+                Q(iccup=winner["Name"]) | 
+                Q(battlenet=winner["Name"]) | 
+                Q(shield_battery=winner["Name"])
+            )
+        except User.DoesNotExist:
+            pass
+        try:
+            self.loser = User.objects.get(
+                Q(iccup=loser["Name"]) | 
+                Q(battlenet=loser["Name"]) | 
+                Q(shield_battery=loser["Name"])
+            )
+        except User.DoesNotExist:
+            pass
+
+        self.match_map = parsed_map["Header"]["Map"]
+        tmp.close()
+
     def save(self, *args, **kwargs):
+        if not self.pk:  # row init
+            super().save(*args, **kwargs)
+            self.parse_replay()
         if self.winner_confirmed and self.loser_confirmed and self.rated:
             winner_pre = self.winner.rating
             loser_pre = self.loser.rating

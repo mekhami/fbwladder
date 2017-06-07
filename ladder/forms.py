@@ -5,7 +5,7 @@ from .models import Match, Report
 class MatchForm(forms.ModelForm):
     class Meta:
         model = Match
-        exclude = ('date', 'winner_confirmed', 'loser_confirmed', 'calculated', 'winner_rating_change', 'loser_rating_change')
+        exclude = ('replay', 'date', 'winner_confirmed', 'loser_confirmed', 'calculated', 'winner_rating_change', 'loser_rating_change')
 
 
 class ReportForm(forms.ModelForm):
@@ -26,3 +26,9 @@ class ReportForm(forms.ModelForm):
         if commit:
             model.save()
         return model
+
+
+class MatchReplayForm(forms.ModelForm):
+    class Meta:
+        model = Match
+        fields = ('replay',)

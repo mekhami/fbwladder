@@ -1,22 +1,29 @@
+import json
+import os
+import subprocess
+import tempfile
+
 from django.conf import settings
+from django.core.files.uploadhandler import TemporaryFileUploadHandler
 from django.db.models import Q
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import generic
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Match
-from .forms import MatchForm, ReportForm
+from .forms import MatchForm, ReportForm, MatchReplayForm
 from fbw.users.models import User
 
 
 # Create your views here.
 class MatchFormView(generic.FormView):
-    form_class = MatchForm
+    form_class = MatchReplayForm
     template_name = 'ladder/submit.html'
 
     def get_success_url(self):
-        return self.object.get_absolute_url()
+        return self.object.get_absolute_url() + 'edit'
 
     def form_valid(self, form):
         self.object = form.save()
@@ -54,6 +61,12 @@ class MatchReportView(generic.FormView):
 class MatchDetailView(generic.DetailView):
     model = Match
     template_name = 'ladder/match_detail.html'
+
+
+class MatchEditView(generic.UpdateView):
+    model = Match
+    form_class = MatchForm
+    template_name = 'ladder/match_edit.html'
 
 
 class UnconfirmedMatchesView(generic.ListView):
@@ -106,3 +119,12 @@ def confirm_match(request, pk):
         return redirect(match)
     else:
         return HttpResponseForbidden()
+
+
+@csrf_exempt
+def parse_replay(request):
+    request.upload_handlers = [TemporaryFileUploadHandler(request)]
+    replay = request.FILES["replay"].temporary_file_path()
+    screp_path = os.path.join(os.path.dirname(__file__)) + '/screp'
+    parsed = subprocess.run([screp_path, "-map", replay], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    return JsonResponse(json.loads(parsed))

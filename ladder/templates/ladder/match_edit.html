@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <h1>Confirm Match Details</h1>
+    <form method="POST" action="{% url 'ladder:match-edit' object.pk %}">{% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}
