@@ -127,7 +127,7 @@ class Match(models.Model):
         if not self.pk:  # row init
             super().save(*args, **kwargs)
             self.parse_replay()
-        if self.winner_confirmed and self.loser_confirmed and self.rated:
+        if self.winner_confirmed and self.loser_confirmed:
             winner_pre = self.winner.rating
             loser_pre = self.loser.rating
             new_winner, new_loser = assign_elo_changes(self.winner, self.loser)
