@@ -22,9 +22,23 @@ class ConfirmedMatchFilter(admin.SimpleListFilter):
             return queryset.filter(Q(winner_confirmed=False) | Q(loser_confirmed=False))
 
 
+class NoRaceFilter(admin.SimpleListFilter):
+    title = _('submitted races',)
+    parameter_name = 'unraced'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('unraced', _('races not set')),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'unraced':
+            return queryset.filter(Q(winner_race__isnull=True) | Q(loser_race__isnull=True) | Q(winner_race__exact='') | Q(loser_race__exact=''))
+
+
 class MatchAdmin(admin.ModelAdmin):
     readonly_fields = ('date', 'winner_rating_change', 'loser_rating_change', 'calculated')
-    list_filter = (ConfirmedMatchFilter,)
+    list_filter = (ConfirmedMatchFilter, NoRaceFilter)
 
 
 admin.site.register(Match, MatchAdmin)
