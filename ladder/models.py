@@ -88,15 +88,17 @@ class Match(models.Model):
            subprocess.run([screp_path, "-cmds", tmp.name], stdout=subprocess.PIPE).stdout.decode('utf-8')
         )
 
+        found = False
         for cmd in reversed(parsed_cmds["Commands"]["Cmds"]):
             try:
                 if cmd["Reason"]["Name"] == "Defeat":
                     defeat_command = cmd
+                    found = True
                     break
             except KeyError:
                 pass
 
-        if not defeat_command:
+        if not found:
             return
 
         loser_id = defeat_command["PlayerID"]  # will be 1 or 0 for all two player games
