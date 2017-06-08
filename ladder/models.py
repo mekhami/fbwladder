@@ -96,6 +96,9 @@ class Match(models.Model):
             except KeyError:
                 pass
 
+        if not defeat_command:
+            return
+
         loser_id = defeat_command["PlayerID"]  # will be 1 or 0 for all two player games
         winner_id = int(not loser_id)  # quite pretty, gets the opposite of loser_id
 
