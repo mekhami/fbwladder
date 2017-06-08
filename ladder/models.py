@@ -99,8 +99,11 @@ class Match(models.Model):
         loser_id = defeat_command["PlayerID"]  # will be 1 or 0 for all two player games
         winner_id = int(not loser_id)  # quite pretty, gets the opposite of loser_id
 
-        winner = next(d for d in parsed_map["Header"]["Players"] if d['ID'] == winner_id)
-        loser = next(d for d in parsed_map["Header"]["Players"] if d['ID'] == loser_id)
+        try:
+            winner = next(d for d in parsed_map["Header"]["Players"] if d['ID'] == winner_id)
+            loser = next(d for d in parsed_map["Header"]["Players"] if d['ID'] == loser_id)
+        except StopIteration:
+            return
 
         if race:
             self.winner_race = winner["Race"]["Name"][0]
