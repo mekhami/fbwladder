@@ -88,12 +88,15 @@ class Match(models.Model):
            subprocess.run([screp_path, "-cmds", tmp.name], stdout=subprocess.PIPE).stdout.decode('utf-8')
         )
 
-        try:
-            defeat_command = next(x for x in reversed(parsed_cmds["Commands"]["Cmds"]) if x["Reason"]["Name"] == "Defeat")
-        except StopIteration:
-            return
+        for cmd in reversed(parsed_cmds["Commands"]["Cmds"]):
+            try:
+                if ["Reason"]["Name"] == "Defeat":
+                    defeat_command = cmd
+                    break
+            except KeyError:
+                pass
 
-        loser_id = command["PlayerID"]  # will be 1 or 0 for all two player games
+        loser_id = defeat_command["PlayerID"]  # will be 1 or 0 for all two player games
         winner_id = int(not loser_id)  # quite pretty, gets the opposite of loser_id
 
         winner = next(d for d in parsed_map["Header"]["Players"] if d['ID'] == winner_id)
