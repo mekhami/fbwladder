@@ -34,22 +34,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Zerg</td>
-                            <td>{{ object.vZ_winrate }}</td>
-                        </tr>
-                        <tr>
-                            <td>Terran</td>
-                            <td>{{ object.vT_winrate }}</td>
-                        </tr>
-                        <tr>
-                            <td>Protoss</td>
-                            <td>{{ object.vP_winrate }}</td>
-                        </tr>
-                        <tr>
-                            <td>Random</td>
-                            <td>{{ object.vR_winrate }}</td>
-                        </tr>
+                        {% for key, value in object.winrates.items %}
+                            {% if value %}
+                                <tr>
+                                    <td>{{ key }}</td>
+                                    <td>{{ value }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

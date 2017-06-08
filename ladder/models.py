@@ -88,6 +88,9 @@ class Match(models.Model):
            subprocess.run([screp_path, "-cmds", tmp.name], stdout=subprocess.PIPE).stdout.decode('utf-8')
         )
 
+        if match_map:
+            self.match_map = parsed_map["Header"]["Map"]
+
         found = False
         for cmd in reversed(parsed_cmds["Commands"]["Cmds"]):
             try:
@@ -131,9 +134,6 @@ class Match(models.Model):
                 )
             except User.DoesNotExist:
                 pass
-
-        if match_map:
-            self.match_map = parsed_map["Header"]["Map"]
 
         tmp.close()
 

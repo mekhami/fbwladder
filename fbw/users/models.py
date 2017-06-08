@@ -38,38 +38,101 @@ class User(AbstractUser):
     @property
     def games_played(self):
         return Match.objects.filter(Q(winner=self) | Q(loser=self)).count()
+    
 
     @property
-    def vZ_winrate(self):
-        wins = Match.objects.filter(Q(winner=self) & Q(loser__race='Z')).count()
-        losses = Match.objects.filter(Q(loser=self) & Q(winner__race='Z')).count()
-        if wins + losses == 0:
-            return ""
-        return "{0:.0f}%".format(wins / (wins+losses) * 100)
+    def winrates(self):
+        wins = Match.objects.filter(winner=self)
+        losses = Match.objects.filter(loser=self)
 
-    @property
-    def vT_winrate(self):
-        wins = Match.objects.filter(Q(winner=self) & Q(loser__race='T')).count()
-        losses = Match.objects.filter(Q(loser=self) & Q(winner__race='T')).count()
-        if wins + losses == 0:
-            return ""
-        return "{0:.0f}%".format(wins / (wins+losses) * 100)
+        matchups = {
+            'ZvT_wins': 0,
+            'ZvT_games': 0,
+            'ZvP_wins': 0,
+            'ZvP_games': 0,
+            'ZvZ_wins': 0,
+            'ZvZ_games': 0,
+            'TvZ_wins': 0,
+            'TvZ_games': 0,
+            'TvT_wins': 0,
+            'TvT_games': 0,
+            'TvP_wins': 0,
+            'TvP_games': 0,
+            'PvZ_wins': 0,
+            'PvZ_games': 0,
+            'PvP_wins': 0,
+            'PvP_games': 0,
+            'PvT_wins': 0,
+            'PvT_games': 0,
+        }
 
-    @property
-    def vP_winrate(self):
-        wins = Match.objects.filter(Q(winner=self) & Q(loser__race='P')).count()
-        losses = Match.objects.filter(Q(loser=self) & Q(winner__race='P')).count()
-        if wins + losses == 0:
-            return ""
-        return "{0:.0f}%".format(wins / (wins+losses) * 100)
+        # god forgive me for what i'm about to do
+        for match in wins:
+            if match.winner_race == 'Z':
+                if match.loser_race == 'T':
+                    matchups['ZvT_games'] += 1
+                    matchups['ZvT_wins'] += 1
+                if match.loser_race == 'P':
+                    matchups['ZvP_games'] += 1
+                    matchups['ZvP_wins'] += 1
+                if match.loser_race == 'Z':
+                    matchups['ZvZ_games'] += 1
+                    matchups['ZvZ_wins'] += 1
+            if match.winner_race == 'P':
+                if match.loser_race == 'T':
+                    matchups['PvT_games'] += 1
+                    matchups['PvT_wins'] += 1
+                if match.loser_race == 'P':
+                    matchups['PvP_games'] += 1
+                    matchups['PvP_wins'] += 1
+                if match.loser_race == 'Z':
+                    matchups['PvZ_games'] += 1
+                    matchups['PvZ_wins'] += 1
+            if match.winner_race == 'T':
+                if match.loser_race == 'T':
+                    matchups['TvT_games'] += 1
+                    matchups['TvT_wins'] += 1
+                if match.loser_race == 'P':
+                    matchups['TvP_games'] += 1
+                    matchups['TvP_wins'] += 1
+                if match.loser_race == 'Z':
+                    matchups['TvZ_games'] += 1
+                    matchups['TvZ_wins'] += 1
 
-    @property
-    def vR_winrate(self):
-        wins = Match.objects.filter(Q(winner=self) & Q(loser__race='R')).count()
-        losses = Match.objects.filter(Q(loser=self) & Q(winner__race='R')).count()
-        if wins + losses == 0:
-            return ""
-        return "{0:.0f}%".format(wins / (wins+losses) * 100)
+        for match in losses:
+            if match.loser_race == 'Z':
+                if match.winner_race == 'T':
+                    matchups['ZvT_games'] += 1
+                if match.winner_race == 'P':
+                    matchups['ZvP_games'] += 1
+                if match.winner_race == 'Z':
+                    matchups['ZvZ_games'] += 1
+            if match.loser_race == 'P':
+                if match.winner_race == 'T':
+                    matchups['PvT_games'] += 1
+                if match.winner_race == 'P':
+                    matchups['PvP_games'] += 1
+                if match.winner_race == 'Z':
+                    matchups['PvZ_games'] += 1
+            if match.loser_race == 'T':
+                if match.winner_race == 'T':
+                    matchups['TvT_games'] += 1
+                if match.winner_race == 'P':
+                    matchups['TvP_games'] += 1
+                if match.winner_race == 'Z':
+                    matchups['TvZ_games'] += 1
+
+        return {
+            'ZvT': "{0:.0f}%".format(matchups['ZvT_wins'] / matchups['ZvT_games'] * 100) if matchups['ZvT_games'] > 0 else "",
+            'ZvP': "{0:.0f}%".format(matchups['ZvP_wins'] / matchups['ZvP_games'] * 100) if matchups['ZvP_games'] > 0 else "",
+            'ZvZ': "{0:.0f}%".format(matchups['ZvZ_wins'] / matchups['ZvZ_games'] * 100) if matchups['ZvZ_games'] > 0 else "",
+            'TvT': "{0:.0f}%".format(matchups['TvT_wins'] / matchups['TvT_games'] * 100) if matchups['TvT_games'] > 0 else "",
+            'TvP': "{0:.0f}%".format(matchups['TvP_wins'] / matchups['TvP_games'] * 100) if matchups['TvP_games'] > 0 else "",
+            'TvZ': "{0:.0f}%".format(matchups['TvZ_wins'] / matchups['TvZ_games'] * 100) if matchups['TvZ_games'] > 0 else "",
+            'PvT': "{0:.0f}%".format(matchups['PvT_wins'] / matchups['PvT_games'] * 100) if matchups['PvT_games'] > 0 else "",
+            'PvP': "{0:.0f}%".format(matchups['PvP_wins'] / matchups['PvP_games'] * 100) if matchups['PvP_games'] > 0 else "",
+            'PvZ': "{0:.0f}%".format(matchups['PvZ_wins'] / matchups['PvZ_games'] * 100) if matchups['PvZ_games'] > 0 else "",
+        }
 
     @property
     def unconfirmed_matches(self):
