@@ -90,7 +90,7 @@ class Match(models.Model):
 
         for cmd in reversed(parsed_cmds["Commands"]["Cmds"]):
             try:
-                if ["Reason"]["Name"] == "Defeat":
+                if cmd["Reason"]["Name"] == "Defeat":
                     defeat_command = cmd
                     break
             except KeyError:
