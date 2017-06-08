@@ -5,43 +5,42 @@
         <h1 style="margin-top: 20px; margin-bottom: 20px;">Match Details</h1>
 
 
-            {% if object.calculated %}
+        {% if object.calculated %}
 
-                <h3>
-                    <strong>
-                        <a href="{% url 'users:detail' object.winner.username %}">{{ object.winner.username }}</a> 
-                        <small class="winner-name">(+{{ object.winner_rating_change }})</small> 
-                        - 
-                        <a href="{% url 'users:detail' object.loser.username %}">{{ object.loser.username }}</a> 
-                        <small class="loser-name">(-{{ object.loser_rating_change }})</small>
-                    </strong>
-                </h3>
-            {% else %}
+            <h3>
+                <strong>
+                    <a href="{% url 'users:detail' object.winner.username %}">{{ object.winner.username }}</a> 
+                    <small class="winner-name">(+{{ object.winner_rating_change }})</small> 
+                    - 
+                    <a href="{% url 'users:detail' object.loser.username %}">{{ object.loser.username }}</a> 
+                    <small class="loser-name">(-{{ object.loser_rating_change }})</small>
+                </strong>
+            </h3>
+        {% else %}
 
-                <h3><strong><a href="{% url 'users:detail' object.winner.username %}">{{ object.winner.username }}</a> - <a href="{% url 'users:detail' object.loser.username %}">{{ object.loser.username }}</a></strong></h3>
-                {% if request.user == object.winner %}
-                    {% if not object.winner_confirmed %}
-                        <a href="{% url 'ladder:match-confirm' object.id %}">Confirm Match</a>
-                    {% else %}
-                        <p>You have confirmed the match, but your opponent has not. Please remind them to confirm the results.</p>
-                    {% endif %}
-                {% elif request.user == object.loser %}
-                    {% if not object.loser_confirmed %}
-                        <a href="{% url 'ladder:match-confirm' object.id %}">Confirm Match</a>
-                    {% else %}
-                        <p>You have confirmed the match, but your opponent has not. Please remind them to confirm the results.</p>
-                    {% endif %}
+            <h3><strong><a href="{% url 'users:detail' object.winner.username %}">{{ object.winner.username }}</a> - <a href="{% url 'users:detail' object.loser.username %}">{{ object.loser.username }}</a></strong></h3>
+            {% if request.user == object.winner %}
+                {% if not object.winner_confirmed %}
+                    <a href="{% url 'ladder:match-confirm' object.id %}">Confirm Match</a>
                 {% else %}
-                    <p>This match has not yet been confirmed by both players.</p>
+                    <p>You have confirmed the match, but your opponent has not. Please remind them to confirm the results.</p>
                 {% endif %}
+            {% elif request.user == object.loser %}
+                {% if not object.loser_confirmed %}
+                    <a href="{% url 'ladder:match-confirm' object.id %}">Confirm Match</a>
+                {% else %}
+                    <p>You have confirmed the match, but your opponent has not. Please remind them to confirm the results.</p>
+                {% endif %}
+            {% else %}
+                <p>This match has not yet been confirmed by both players.</p>
             {% endif %}
+        {% endif %}
 
-            <p><strong>Date:</strong> {{ object.date }}</p>
-            <p><strong>Map:</strong> {{ object.match_map }}</p>
-            <p><strong>Rated:</strong> {{ object.rated|yesno:"Yes,No" }}</p>
+        <p><strong>Date:</strong> {{ object.date }}</p>
+        <p><strong>Map:</strong> {{ object.match_map }}</p>
         <p>
             <a href="{{ object.replay.url}}" download><button class="btn btn-primary">Download Replay</button></a>
-	    <a href="{% url 'ladder:match-report' object.id %}"><button class="btn btn-danger">Report Match</button></a>
+            <a href="{% url 'ladder:match-report' object.id %}"><button class="btn btn-danger">Report Match</button></a>
         </p>
     </div>
 {% endblock %}

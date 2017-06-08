@@ -74,8 +74,8 @@ class Match(models.Model):
     def __str__(self):
         return self.winner.username + ' vs ' + self.loser.username + ' ' + self.date.strftime('%m/%d/%y')
 
-    def parse_replay(self):
-        from fbw.users.models import User
+    def parse_replay(self, race=True, users=True, match_map=True):
+        from fbw.users.models import User  # noqa
 
         replay_content = requests.get(self.replay.url).content
         tmp = tempfile.NamedTemporaryFile()
@@ -88,39 +88,42 @@ class Match(models.Model):
            subprocess.run([screp_path, "-cmds", tmp.name], stdout=subprocess.PIPE).stdout.decode('utf-8')
         )
 
-        for command in reversed(parsed_cmds["Commands"]["Cmds"]):
-            try:
-                if command["Reason"]["Name"] == "Defeat":
-                    loser_id = command["PlayerID"]
-                    winner_id = int(not loser_id)
-                    break
-            except KeyError:
-                pass
+        try:
+            defeat_command = next(x for x in reversed(parsed_cmds["Commands"]["Cmds"]) if x["Reason"]["Name"] == "Defeat")
+        except StopIteration:
+            return
+
+        loser_id = command["PlayerID"]  # will be 1 or 0 for all two player games
+        winner_id = int(not loser_id)  # quite pretty, gets the opposite of loser_id
 
         winner = next(d for d in parsed_map["Header"]["Players"] if d['ID'] == winner_id)
         loser = next(d for d in parsed_map["Header"]["Players"] if d['ID'] == loser_id)
 
-        self.winner_race = winner["Race"]["Name"][0]
-        self.loser_race = loser["Race"]["Name"][0]
+        if race:
+            self.winner_race = winner["Race"]["Name"][0]
+            self.loser_race = loser["Race"]["Name"][0]
 
-        try:
-            self.winner = User.objects.get(
-                Q(iccup=winner["Name"]) | 
-                Q(battlenet=winner["Name"]) | 
-                Q(shield_battery=winner["Name"])
-            )
-        except User.DoesNotExist:
-            pass
-        try:
-            self.loser = User.objects.get(
-                Q(iccup=loser["Name"]) | 
-                Q(battlenet=loser["Name"]) | 
-                Q(shield_battery=loser["Name"])
-            )
-        except User.DoesNotExist:
-            pass
+        if users:
+            try:
+                self.winner = User.objects.get(
+                    Q(iccup=winner["Name"]) | 
+                    Q(battlenet=winner["Name"]) | 
+                    Q(shield_battery=winner["Name"])
+                )
+            except User.DoesNotExist:
+                pass
+            try:
+                self.loser = User.objects.get(
+                    Q(iccup=loser["Name"]) | 
+                    Q(battlenet=loser["Name"]) | 
+                    Q(shield_battery=loser["Name"])
+                )
+            except User.DoesNotExist:
+                pass
 
-        self.match_map = parsed_map["Header"]["Map"]
+        if match_map:
+            self.match_map = parsed_map["Header"]["Map"]
+
         tmp.close()
 
     def save(self, *args, **kwargs):
