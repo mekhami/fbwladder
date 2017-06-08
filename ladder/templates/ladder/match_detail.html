@@ -42,5 +42,14 @@
             <a href="{{ object.replay.url}}" download><button class="btn btn-primary">Download Replay</button></a>
             <a href="{% url 'ladder:match-report' object.id %}"><button class="btn btn-danger">Report Match</button></a>
         </p>
+        <p>
+            <h3>Admin Actions</h3>
+            {% if request.user.is_superuser %}
+                <p><a href="{% url 'ladder:match-edit' object.id %}"><button class="btn btn-primary">Edit Match</button></a></p>
+                <form method="POST" action="{% url 'ladder:match-delete' object.id %}">{% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete Match</button>
+                </form>
+            {% endif %}
+        </p>
     </div>
 {% endblock %}

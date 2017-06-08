@@ -8,7 +8,7 @@ from django.core.files.uploadhandler import TemporaryFileUploadHandler
 from django.db.models import Q
 from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 
@@ -94,6 +94,11 @@ class MatchListView(generic.ListView):
     context_object_name = 'matches'
     paginate_by = 15
     queryset = Match.objects.all().prefetch_related('winner', 'loser')
+
+
+class MatchDeleteView(generic.DeleteView):
+    model = Match
+    success_url = reverse_lazy('ladder:match-list')
 
 
 class IndexView(generic.ListView):

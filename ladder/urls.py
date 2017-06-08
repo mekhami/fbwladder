@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^match/parse$', views.parse_replay, name='replay-parse'),
     url(r'^match/(?P<pk>\d+)/$', login_required(views.MatchDetailView.as_view()), name='match-detail'),
     url(r'^match/(?P<pk>\d+)/edit$', login_required(views.MatchEditView.as_view()), name='match-edit'),
+    url(r'^match/(?P<pk>\d+)/delete$', login_required(views.MatchDeleteView.as_view()), name='match-delete'),
     url(r'^match/(?P<pk>\d+)/confirm$', login_required(views.confirm_match), name='match-confirm'),
     url(r'^match/(?P<pk>\d+)/report$', login_required(views.MatchReportView.as_view()), name='match-report'),
     url(r'^players$', views.PlayerListView.as_view(), name='player-list'),
