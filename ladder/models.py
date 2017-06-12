@@ -72,7 +72,10 @@ class Match(models.Model):
         ordering = ('-date',)
 
     def __str__(self):
-        return self.winner.username + ' vs ' + self.loser.username + ' ' + self.date.strftime('%m/%d/%y')
+        if self.winner and self.loser:
+            return self.winner.username + ' vs ' + self.loser.username + ' ' + self.date.strftime('%m/%d/%y')
+        else:
+            return 'Incomplete Data ' + self.date.strftime('%m/%d/%y')
 
     def parse_replay(self, race=True, users=True, match_map=True):
         from fbw.users.models import User  # noqa
@@ -81,12 +84,15 @@ class Match(models.Model):
         tmp = tempfile.NamedTemporaryFile()
         tmp.write(replay_content)
         screp_path = os.path.join(os.path.dirname(__file__)) + '/screp'
-        parsed_map = json.loads(
-           subprocess.run([screp_path, "-map", tmp.name], stdout=subprocess.PIPE).stdout.decode('utf-8')
-        )
-        parsed_cmds = json.loads(
-           subprocess.run([screp_path, "-cmds", tmp.name], stdout=subprocess.PIPE).stdout.decode('utf-8')
-        )
+        try:
+            parsed_map = json.loads(
+               subprocess.run([screp_path, "-map", tmp.name], stdout=subprocess.PIPE).stdout.decode('utf-8')
+            )
+            parsed_cmds = json.loads(
+               subprocess.run([screp_path, "-cmds", tmp.name], stdout=subprocess.PIPE).stdout.decode('utf-8')
+            )
+        except json.JSONDecodeError:
+            return
 
         if match_map:
             self.match_map = parsed_map["Header"]["Map"]
