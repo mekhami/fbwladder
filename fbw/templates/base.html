@@ -53,12 +53,10 @@
                 {# URL provided by django-allauth/account/urls.py #}
                 <a class="nav-link" href="{% url 'ladder:match-list' %}">{% trans "Replays" %}</a>
               </li>
-              {% if request.user.is_superuser %}
               <li class="nav-item">
                 {# URL provided by django-allauth/account/urls.py #}
                 <a class="nav-link" href="{% url 'tournaments' %}">{% trans "Tournaments" %}</a>
               </li>
-              {% endif %}
               <li class="nav-item">
                 {# URL provided by django-allauth/account/urls.py #}
                 <a class="nav-link" href="{% url 'ladder:submit' %}"><button class="btn btn-primary" type="button">{% trans "Submit Replay" %}</button></a>
