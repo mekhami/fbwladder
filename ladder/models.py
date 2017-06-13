@@ -38,15 +38,6 @@ def assign_elo_changes(winner, loser):
     return (winner.rating, loser.rating)
 
 
-def replay_file_name(instance, filename):
-    name, file_ext = os.path.splitext(filename)
-    return 'replays/{}-{}-{}{}'.format(
-        instance.winner.username, 
-        instance.loser.username, 
-        instance.date.strftime('%m-%d-%y'), 
-        file_ext
-    )
-
 class Match(models.Model):
     RACE_CHOICES = (
         ('Z', 'Zerg'),
